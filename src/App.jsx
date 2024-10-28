@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 function App() {
   const [inputData, setInputData] = useState("");
@@ -8,20 +8,29 @@ function App() {
   const [error, setError] = useState("");
 
   const handleTodoList = () => {
-    setInputData("");
     setError("");
     if (inputData.trim() !== "") {
-      setTodoData((prevTodo) => [
-        ...prevTodo,
-        { id: Date.now(), todoMsg: inputData },
-      ]);
+      const newTodo = { id: Date.now(), todoMsg: inputData };
+      const updatedTodos = [...todoData, newTodo];
+      setTodoData(updatedTodos);
+      sessionStorage.setItem("todoData", JSON.stringify(updatedTodos));
+      setInputData("");
     } else {
       setError("Todo is required");
     }
   };
 
+  useEffect(() => {
+    const storedData = sessionStorage.getItem("todoData");
+    if (storedData) {
+      setTodoData(JSON.parse(storedData));
+    }
+  }, []);
+
   const handleRemoveTodo = (id) => {
-    setTodoData((prevTodo) => prevTodo.filter((todo) => todo.id !== id));
+    const updatedTodos = todoData.filter(todo => todo.id !== id);
+    setTodoData(updatedTodos);
+    localStorage.setItem("todoData", JSON.stringify(updatedTodos));
   };
 
   const handleEditTodo = (id) => {
@@ -31,11 +40,11 @@ function App() {
   };
 
   const handleSaveTodo = (id) => {
-    setTodoData((prevTodo) =>
-      prevTodo.map((todo) =>
-        todo.id === id ? { ...todo, todoMsg: editableTodoMsg } : todo
-      )
+    const updatedTodos = todoData.map(todo =>
+      todo.id === id ? { ...todo, todoMsg: editableTodoMsg } : todo
     );
+    setTodoData(updatedTodos);
+    localStorage.setItem("todoData", JSON.stringify(updatedTodos)); // Update localStorage
     setEditableTodoId(null);
   };
 
@@ -66,7 +75,7 @@ function App() {
             {todoData.map((todo) => (
               <div
                 key={todo.id}
-                className="relative w-[250px] h-[300px] flex flex-col gap-2 pt-4 pb-2 px-2 bg-gray-600 rounded-md my-2"
+                className="w-[250px] h-[300px] flex flex-col gap-2 pt-4 pb-2 px-2 bg-gray-600 rounded-md my-2 max-[500px]:w-[320px] max-[500px]:h-[400px]"
               >
                 {editableTodoId === todo.id ? (
                   <>
@@ -86,7 +95,7 @@ function App() {
                 ) : (
                   <>
                     <textarea
-                      className="px-3 py-2 mt-3 w-full h-full resize-none rounded-lg text-white bg-gray-900 font-semibold focus:outline-none"
+                      className="px-3 py-2 w-full h-full resize-none rounded-lg text-white bg-gray-900 font-semibold focus:outline-none"
                       type="text"
                       readOnly
                       value={todo.todoMsg}

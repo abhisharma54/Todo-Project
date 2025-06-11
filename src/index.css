@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+  background-color: #202020;
+  overflow: auto;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #707070;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #202020;
+  border-radius: 20px;
+}
+
+textarea.edit::-webkit-scrollbar-thumb {
+  background-color: #004ffa;
+}
+
+textarea.save::-webkit-scrollbar-thumb {
+  background-color: #008500;
+}
